@@ -388,6 +388,19 @@
                                 <span class="ico-refresh font-ico"></span> {{.i18n.refresh}}
                             </li>
                             <li class="hr"></li>
+                            <li class="gitClone" onclick="tree.export();">
+                                <span class="ico-gitClone font-ico"></span> {{.i18n.git_Clone}}
+                            </li>
+                            <li class="gitSynchronize" onclick="tree.export();">
+                                <span class="ico-export font-ico"></span> {{.i18n.git_synchronize}}
+                            </li>
+                            <li class="gitNewBranch" onclick="tree.export();">
+                                <span class="ico-export font-ico"></span> {{.i18n.git_newBranch}}
+                            </li>
+                            <li class="gitLocalBranches" onclick="tree.export();">
+                                <span class="ico-export font-ico"></span> {{.i18n.git_localBranches}}
+                            </li>
+                            <li class="hr"></li>
                             <li onclick="tree.export();">
                                 <span class="ico-export font-ico"></span> {{.i18n.export}}
                             </li>
@@ -539,6 +552,11 @@
             <input placeholder="{{.i18n.keyword}}" />
             <input placeholder="{{.i18n.file_format}}" />
         </div>
+        <div id="dialogGitClone" class="dialog-form fn-none">
+            <input placeholder="{{.i18n.git_url}}" />
+            <input placeholder="{{.i18n.git_user}}" />
+            <input placeholder="{{.i18n.git_pass}}" />
+        </div>
         <div id="dialogCloseEditor" class="dialog-form fn-none">
             <div></div><br/>
             <div class="fn-right">
@@ -634,6 +652,7 @@
         {{else}}
         <script type="text/javascript" src="/static/js/lib.min.js"></script>
         <script type="text/javascript" src="/static/js/wide.min.js?{{.conf.StaticResourceVersion}}"></script>
+        <!-- <script type="text/javascript" src="/static/js/wide.js"></script> -->
         {{end}}
         <script type="text/javascript" src="/static/js/lib/ztree/jquery.ztree.all-3.5.min.js"></script>
         <script type="text/javascript" src="/static/js/lib/zeroclipboard/ZeroClipboard.min.js"></script>

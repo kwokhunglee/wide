@@ -45,6 +45,8 @@ type Node struct {
 	Removable bool    `json:"removable"` // whether can remove this file node
 	IsGoAPI   bool    `json:"isGOAPI"`
 	Mode      string  `json:"mode"`
+	GitClone  bool    `json:"gitClone"` //是否允许GITClone
+	GitRepo   bool    `json:"gitRepo"`  //是否GIT目录
 	Children  []*Node `json:"children"`
 }
 
@@ -63,7 +65,7 @@ func initAPINode() {
 	apiPath := gulu.Go.GetAPIPath()
 
 	apiNode = &Node{Name: "Go API", Path: apiPath, IconSkin: "ico-ztree-dir-api ", Type: "d",
-		Creatable: false, Removable: false, IsGoAPI: true, Children: []*Node{}}
+		Creatable: false, Removable: false, IsGoAPI: true, GitClone: false, GitRepo: false, Children: []*Node{}}
 
 	walk(apiPath, apiNode, false, false, true)
 }
@@ -87,7 +89,7 @@ func GetFilesHandler(w http.ResponseWriter, r *http.Request) {
 	userWorkspace := conf.GetUserWorkspace(uid)
 	workspaces := filepath.SplitList(userWorkspace)
 
-	root := Node{Name: "root", Path: "", IconSkin: "ico-ztree-dir ", Type: "d", IsParent: true, Children: []*Node{}}
+	root := Node{Name: "root", Path: "", IconSkin: "ico-ztree-dir ", Type: "d", IsParent: true, GitClone: true, GitRepo: false, Children: []*Node{}}
 
 	if nil == apiNode { // lazy init
 		initAPINode()
@@ -106,6 +108,8 @@ func GetFilesHandler(w http.ResponseWriter, r *http.Request) {
 			Creatable: true,
 			Removable: false,
 			IsGoAPI:   false,
+			GitClone:  true,
+			GitRepo:   false,
 			Children:  []*Node{}}
 
 		walk(workspacePath, &workspaceNode, true, true, false)
@@ -131,17 +135,19 @@ func RefreshDirectoryHandler(w http.ResponseWriter, r *http.Request) {
 	uid := httpSession.Values["uid"].(string)
 
 	r.ParseForm()
-	path := r.FormValue("path")
+	pathValue := r.FormValue("path")
 
-	if !gulu.Go.IsAPI(path) && !session.CanAccess(uid, path) {
+	if !gulu.Go.IsAPI(pathValue) && !session.CanAccess(uid, pathValue) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 
 		return
 	}
 
-	node := Node{Name: "root", Path: path, IconSkin: "ico-ztree-dir ", Type: "d", Children: []*Node{}}
+	gitPath := filepath.Join(pathValue, ".git")
+	isGit := pathExists(gitPath)
+	node := Node{Name: "root", Path: pathValue, IconSkin: "ico-ztree-dir ", Type: "d", GitClone: false, GitRepo: isGit, Children: []*Node{}}
 
-	walk(path, &node, true, true, false)
+	walk(pathValue, &node, true, true, false)
 
 	w.Header().Set("Content-Type", "application/json")
 	data, err := json.Marshal(node.Children)
@@ -582,6 +588,9 @@ func walk(path string, node *Node, creatable, removable, isGOAPI bool) {
 			child.Creatable = creatable
 			child.IconSkin = "ico-ztree-dir "
 			child.IsParent = true
+			child.GitClone = false
+			gitPath := filepath.Join(fpath, ".git")
+			child.GitRepo = pathExists(gitPath)
 
 			walk(fpath, &child, creatable, removable, isGOAPI)
 		} else {
@@ -594,6 +603,14 @@ func walk(path string, node *Node, creatable, removable, isGOAPI bool) {
 	}
 
 	return
+}
+
+func pathExists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	return false
 }
 
 // listFiles lists names of files under the specified dirname.

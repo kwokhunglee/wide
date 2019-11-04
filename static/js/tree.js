@@ -245,6 +245,7 @@ var tree = {
                                 }
                             },
                             onRightClick: function (event, treeId, treeNode) {
+
                                 if (treeNode && !treeNode.isGOAPI) {
                                     menu.undisabled(['import', 'export', 'git-clone']);
 
@@ -296,6 +297,24 @@ var tree = {
                                             $dirRMenu.find(".create").addClass("disabled");
                                         }
 
+                                        if (wide.curNode.gitClone) {
+                                            $dirRMenu.find(".gitClone").removeClass("disabled");
+                                        } else {
+                                            $dirRMenu.find(".gitClone").addClass("disabled");
+                                        }
+                                        
+                                        if (wide.curNode.gitRepo) {
+                                            $dirRMenu.find(".gitSynchronize").removeClass("disabled");
+                                            $dirRMenu.find(".gitNewBranch").removeClass("disabled");
+                                            $dirRMenu.find(".gitLocalBranches").removeClass("disabled");
+                                        } else {
+                                            $dirRMenu.find(".gitSynchronize").addClass("disabled");
+                                            $dirRMenu.find(".gitNewBranch").addClass("disabled");
+                                            $dirRMenu.find(".gitLocalBranches").addClass("disabled");
+                                        }
+
+
+                                        
                                         var top = event.clientY - 10;
                                         if ($dirRMenu.height() + top > $('.content').height()) {
                                             top = top - $dirRMenu.height() - 25;

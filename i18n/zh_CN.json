@@ -148,6 +148,18 @@
     "select_all": "全选",
     "select_identifier": "选择标识符",
     "source": "源码",
+    "git_version": "版本",
+    
+    "git_Clone": "Clone",    
+    "git_synchronize": "同步",    
+    "git_newBranch": "新建分支",
+    "git_localBranches": "本地分支",
+    "git_remoteBranches": "远程分支",
+    
+    "git_url": "url",  
+    "git_user": "用户名",  
+    "git_pass": "密码",    
+
     "toggle_comment": "注释",
     "find_in_files": "在文件中查找",
     "no_empty": "不能为空",
