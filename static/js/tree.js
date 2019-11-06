@@ -130,6 +130,13 @@ var tree = {
 
         $("#dialogNewDirPrompt").dialog("open");
     },
+    gitClone:function (it) {
+        if ($(it).hasClass("disabled")) {
+            return false;
+        }
+        $("#dialogGitClone").dialog("open");      
+    },
+
     removeIt: function (it) {
         if (it) {
             if ($(it).hasClass("disabled")) {

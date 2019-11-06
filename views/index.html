@@ -388,7 +388,7 @@
                                 <span class="ico-refresh font-ico"></span> {{.i18n.refresh}}
                             </li>
                             <li class="hr"></li>
-                            <li class="gitClone" onclick="tree.export();">
+                            <li class="gitClone" onclick="tree.gitClone();">
                                 <span class="ico-gitClone font-ico"></span> {{.i18n.git_Clone}}
                             </li>
                             <li class="gitSynchronize" onclick="tree.export();">
@@ -541,6 +541,11 @@
         <div id="dialogNewDirPrompt" class="dialog-prompt fn-none">
             <input/>
         </div>
+        <div id="dialogGitClone" class="dialog-prompt fn-none">
+            <input class="git_url" placeholder="{{.i18n.git_url}}" />
+            <input class="git_user" placeholder="{{.i18n.git_user}}" />
+            <input class="git_pass" placeholder="{{.i18n.git_pass}}" />
+        </div>
         <div id="dialogGoLinePrompt" class="dialog-prompt fn-none">
             <input/>
         </div>
@@ -551,11 +556,6 @@
         <div id="dialogSearchForm" class="dialog-form fn-none">
             <input placeholder="{{.i18n.keyword}}" />
             <input placeholder="{{.i18n.file_format}}" />
-        </div>
-        <div id="dialogGitClone" class="dialog-form fn-none">
-            <input placeholder="{{.i18n.git_url}}" />
-            <input placeholder="{{.i18n.git_user}}" />
-            <input placeholder="{{.i18n.git_pass}}" />
         </div>
         <div id="dialogCloseEditor" class="dialog-form fn-none">
             <div></div><br/>

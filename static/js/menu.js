@@ -171,26 +171,7 @@ var menu = {
     },
     openAbout: function () {
         $("#dialogAbout").dialog("open");
-    },
-
-    gitClone:function () {
-        var currentPath = editors.getCurrentPath();
-        console.log("gitClone currentPath")
-        if (!currentPath) {
-
-            console.log("gitClone !currentPath")
-            return true;
-        }
-
-        if ($(".menu li.gitClone").hasClass("disabled")) {
-            console.log("gitClone !disabled")
-            return true;
-        }
-
-        console.log("gitClone !dialog")
-        // $("#dialogGitClone").dialog("open");
-      
-    },   
+    }, 
     goinstall: function () {
         menu.saveAllFiles();
 

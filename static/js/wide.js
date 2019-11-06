@@ -221,6 +221,46 @@ var wide = {
             }
         });
 
+        
+        $("#dialogGitClone").dialog({
+            "modal": true,
+            "height": 80,
+            "width": 320,
+            "title": config.label.git_Clone,
+            "okText": config.label.git_Clone,
+            "cancelText": config.label.cancel,
+            "afterOpen": function () {
+                $("#dialogGitClone > input:eq(0)").val('').focus();
+                $("#dialogGitClone > input:eq(1)").val('');
+                $("#dialogGitClone > input:eq(2)").val('');
+                $("#dialogGitClone").closest(".dialog-main").find(".dialog-footer > button:eq(0)").prop("disabled", true);
+            },
+            "ok": function () {
+                request = newWideRequest();
+                request.git_url = $("#dialogGitClone > input:eq(0)").val();
+                request.git_user = $("#dialogGitClone > input:eq(1)").val();
+                request.git_pass = $("#dialogGitClone > input:eq(2)").val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/git/clone',
+                    data: JSON.stringify(request),
+                    dataType: "json",
+                    success: function (result) {
+                        if (0 != result.code) {
+                            $("#dialogGitClone").dialog("close");
+                            bottomGroup.tabs.setCurrent("notification");
+                            windows.flowBottom();
+                            $(".bottom-window-group .notification").focus();
+                            return false;
+                        }
+
+                        $("#dialogGitClone").dialog("close");
+                    }
+                });
+            }
+        });
+
         $("#dialogGoFilePrompt").dialog({
             "modal": true,
             "height": 320,
