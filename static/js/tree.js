@@ -222,9 +222,8 @@ var tree = {
         });
 
         var request = newWideRequest();
-
-        request.path = wide.curNode.path;
-        request.pathtype = wide.curNode.pathtype;   
+        // request.path = wide.curNode.path;
+        // request.pathtype = wide.curNode.pathtype;   
 
         $.ajax({
             type: 'POST',

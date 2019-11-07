@@ -118,7 +118,8 @@ var wide = {
             "ok": function () {
                 var request = newWideRequest();
                 request.path = wide.curNode.path;
-                request.pathtype = wide.curNode.pathtype;
+                // request.pathtype = wide.curNode.pathtype;
+                request.pathtype = 0;
 
                 $.ajax({
                     type: 'POST',
