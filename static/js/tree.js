@@ -161,8 +161,9 @@ var tree = {
     },
     export: function () {
         var request = newWideRequest(),
-                isSucc = false;
+        isSucc = false;
         request.path = wide.curNode.path;
+        request.pathtype = wide.curNode.pathtype;        
 
         $.ajax({
             async: false,
@@ -392,6 +393,7 @@ var tree = {
         if (!tree.isDir()) {
             var request = newWideRequest();
             request.path = treeNode.path;
+            request.pathtype = treeNode.pathtype;
 
             $.ajax({
                 async: false,
@@ -477,7 +479,8 @@ var tree = {
                 if (!wide.curNode) {
                     request.dir = "";
                 } else {
-                    request.dir = wide.curNode.path;
+                    request.dir = wide.curNode.path;                    
+                    request.pathtype = wide.curNode.pathtype;
                 }
 
                 request.text = $("#dialogSearchForm > input:eq(0)").val();
@@ -517,6 +520,7 @@ var tree = {
                         request = newWideRequest();
 
                 request.oldPath = wide.curNode.path;
+                request.pathtype = wide.curNode.pathtype;                
                 request.newPath = wide.curNode.path.substring(0, wide.curNode.path.lastIndexOf("/") + 1) + name;
 
                 $.ajax({

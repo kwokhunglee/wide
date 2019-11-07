@@ -16,12 +16,14 @@ package editor
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"os/exec"
 
 	"github.com/b3log/gulu"
 	"github.com/b3log/wide/conf"
+	"github.com/b3log/wide/file"
 	"github.com/b3log/wide/session"
 )
 
@@ -51,7 +53,8 @@ func GoFmtHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filePath := args["file"].(string)
+	// filePath := args["file"].(string)
+	filePath, _ := file.GetPath(uid, args["file"].(string), fmt.Sprint(args["pathtype"]))
 
 	if gulu.Go.IsAPI(filePath) {
 		result.Code = -1

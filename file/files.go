@@ -17,6 +17,7 @@ package file
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -47,6 +48,7 @@ type Node struct {
 	Mode      string  `json:"mode"`
 	GitClone  bool    `json:"gitClone"` //是否允许GITClone
 	GitRepo   bool    `json:"gitRepo"`  //是否GIT目录
+	Pathtype  int     `json:"pathtype"`
 	Children  []*Node `json:"children"`
 }
 
@@ -58,16 +60,24 @@ type Snippet struct {
 	Contents []string `json:"contents"` // lines nearby
 }
 
-var apiNode *Node
+var rootNode *Node
+var pathNode *Node
 
 // initAPINode builds the Go API file node.
-func initAPINode() {
-	apiPath := gulu.Go.GetAPIPath()
+func initGoRoot() {
+	goRoot := gulu.Go.GetAPIPath()
+	rootNode = &Node{Name: "Go API", Path: goRoot, IconSkin: "ico-ztree-dir-api ", Type: "d",
+		Creatable: false, Removable: false, IsGoAPI: true, GitClone: false, GitRepo: false, Pathtype: 1, Children: []*Node{}}
+	logger.Debugf("initGoRoot goRoot [%s] ", goRoot)
+	walk(goRoot, goRoot, rootNode, false, false, true, 1)
+}
 
-	apiNode = &Node{Name: "Go API", Path: apiPath, IconSkin: "ico-ztree-dir-api ", Type: "d",
-		Creatable: false, Removable: false, IsGoAPI: true, GitClone: false, GitRepo: false, Children: []*Node{}}
-
-	walk(apiPath, apiNode, false, false, true)
+func initGoPath() {
+	goPath := gulu.Go.GetPathPath()
+	pathNode = &Node{Name: "Go PATH", Path: goPath, IconSkin: "ico-ztree-dir-api ", Type: "d",
+		Creatable: false, Removable: false, IsGoAPI: true, GitClone: false, GitRepo: false, Pathtype: 2, Children: []*Node{}}
+	logger.Debugf("initGoPath goPath [%s] ", goPath)
+	walk(goPath, goPath, pathNode, false, false, true, 2)
 }
 
 // GetFilesHandler handles request of constructing user workspace file tree.
@@ -78,10 +88,10 @@ func GetFilesHandler(w http.ResponseWriter, r *http.Request) {
 	httpSession, _ := session.HTTPSession.Get(r, session.CookieName)
 	if httpSession.IsNew {
 		http.Error(w, "Forbidden", http.StatusForbidden)
-
 		return
 	}
 	uid := httpSession.Values["uid"].(string)
+	pathtype := 0
 
 	result := gulu.Ret.NewResult()
 	defer gulu.Ret.RetGzResult(w, r, result)
@@ -89,10 +99,14 @@ func GetFilesHandler(w http.ResponseWriter, r *http.Request) {
 	userWorkspace := conf.GetUserWorkspace(uid)
 	workspaces := filepath.SplitList(userWorkspace)
 
-	root := Node{Name: "root", Path: "", IconSkin: "ico-ztree-dir ", Type: "d", IsParent: true, GitClone: true, GitRepo: false, Children: []*Node{}}
+	root := Node{Name: "root", Path: "", IconSkin: "ico-ztree-dir ", Type: "d", Pathtype: pathtype, IsParent: true, GitClone: true, GitRepo: false, Children: []*Node{}}
 
-	if nil == apiNode { // lazy init
-		initAPINode()
+	if nil == rootNode { // lazy init
+		initGoRoot()
+	}
+
+	if nil == pathNode { // lazy init
+		initGoPath()
 	}
 
 	// workspace node process
@@ -110,16 +124,19 @@ func GetFilesHandler(w http.ResponseWriter, r *http.Request) {
 			IsGoAPI:   false,
 			GitClone:  true,
 			GitRepo:   false,
+			Pathtype:  pathtype,
 			Children:  []*Node{}}
 
-		walk(workspacePath, &workspaceNode, true, true, false)
+		walk(workspacePath, workspacePath, &workspaceNode, true, true, false, pathtype)
 
 		// add workspace node
 		root.Children = append(root.Children, &workspaceNode)
 	}
 
 	// add Go API node
-	root.Children = append(root.Children, apiNode)
+
+	root.Children = append(root.Children, rootNode)
+	root.Children = append(root.Children, pathNode)
 
 	result.Data = root
 }
@@ -129,25 +146,21 @@ func RefreshDirectoryHandler(w http.ResponseWriter, r *http.Request) {
 	httpSession, _ := session.HTTPSession.Get(r, session.CookieName)
 	if httpSession.IsNew {
 		http.Error(w, "Forbidden", http.StatusForbidden)
-
 		return
 	}
 	uid := httpSession.Values["uid"].(string)
-
 	r.ParseForm()
-	pathValue := r.FormValue("path")
-
-	if !gulu.Go.IsAPI(pathValue) && !session.CanAccess(uid, pathValue) {
+	pathValue, pathtype := GetPath(uid, r.FormValue("path"), r.FormValue("pathtype"))
+	if !gulu.Go.IsAPI(pathValue) && !gulu.Go.IsPath(pathValue) && !session.CanAccess(uid, pathValue) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
-
 		return
 	}
 
 	gitPath := filepath.Join(pathValue, ".git")
 	isGit := pathExists(gitPath)
-	node := Node{Name: "root", Path: pathValue, IconSkin: "ico-ztree-dir ", Type: "d", GitClone: false, GitRepo: isGit, Children: []*Node{}}
+	node := Node{Name: "root", Path: pathValue, IconSkin: "ico-ztree-dir ", Type: "d", Pathtype: pathtype, GitClone: false, GitRepo: isGit, Children: []*Node{}}
 
-	walk(pathValue, &node, true, true, false)
+	walk(pathValue, pathValue, &node, true, true, false, pathtype)
 
 	w.Header().Set("Content-Type", "application/json")
 	data, err := json.Marshal(node.Children)
@@ -181,9 +194,9 @@ func GetFileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path := args["path"].(string)
+	path, _ := GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
 
-	if !gulu.Go.IsAPI(path) && !session.CanAccess(uid, path) {
+	if !gulu.Go.IsAPI(path) && !gulu.Go.IsPath(path) && !session.CanAccess(uid, path) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 
 		return
@@ -257,10 +270,12 @@ func SaveFileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filePath := args["file"].(string)
+	// filePath := args["file"].(string)
 	sid := args["sid"].(string)
 
-	if gulu.Go.IsAPI(filePath) || !session.CanAccess(uid, filePath) {
+	filePath, _ := GetPath(uid, args["file"].(string), fmt.Sprint(args["pathtype"]))
+
+	if gulu.Go.IsAPI(filePath) || gulu.Go.IsPath(filePath) || !session.CanAccess(uid, filePath) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 
 		return
@@ -309,15 +324,13 @@ func NewFileHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&args); err != nil {
 		logger.Error(err)
 		result.Code = -1
-
 		return
 	}
 
-	path := args["path"].(string)
+	path, _ := GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
 
-	if gulu.Go.IsAPI(path) || !session.CanAccess(uid, path) {
+	if gulu.Go.IsAPI(path) || gulu.Go.IsPath(path) || !session.CanAccess(uid, path) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
-
 		return
 	}
 
@@ -361,15 +374,14 @@ func RemoveFileHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&args); err != nil {
 		logger.Error(err)
 		result.Code = -1
-
 		return
 	}
 
-	path := args["path"].(string)
+	// path := args["path"].(string)
+	path, _ := GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
 
-	if gulu.Go.IsAPI(path) || !session.CanAccess(uid, path) {
+	if gulu.Go.IsAPI(path) || gulu.Go.IsPath(path) || !session.CanAccess(uid, path) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
-
 		return
 	}
 
@@ -411,16 +423,17 @@ func RenameFileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	oldPath := args["oldPath"].(string)
-	if gulu.Go.IsAPI(oldPath) ||
+	oldPath, _ := GetPath(uid, args["oldPath"].(string), fmt.Sprint(args["pathtype"]))
+	newPath, _ := GetPath(uid, args["newPath"].(string), fmt.Sprint(args["pathtype"]))
+	// oldPath := args["oldPath"].(string)
+	// newPath := args["newPath"].(string)
+	if gulu.Go.IsAPI(oldPath) || gulu.Go.IsPath(oldPath) ||
 		!session.CanAccess(uid, oldPath) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
-
 		return
 	}
 
-	newPath := args["newPath"].(string)
-	if gulu.Go.IsAPI(newPath) || !session.CanAccess(uid, newPath) {
+	if gulu.Go.IsAPI(newPath) || gulu.Go.IsPath(newPath) || !session.CanAccess(uid, newPath) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 
 		return
@@ -444,8 +457,9 @@ func RenameFileHandler(w http.ResponseWriter, r *http.Request) {
 
 // Use to find results sorting.
 type foundPath struct {
-	Path  string `json:"path"`
-	score int
+	Path     string `json:"path"`
+	score    int
+	pathtype int
 }
 
 type foundPaths []*foundPath
@@ -475,8 +489,10 @@ func FindHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path := args["path"].(string) // path of selected file in file tree
-	if !gulu.Go.IsAPI(path) && !session.CanAccess(uid, path) {
+	// path := args["path"].(string) // path of selected file in file tree
+	path, _ := GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
+
+	if !gulu.Go.IsAPI(path) && !gulu.Go.IsPath(path) && !session.CanAccess(uid, path) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 
 		return
@@ -539,7 +555,8 @@ func SearchTextHandler(w http.ResponseWriter, r *http.Request) {
 
 	// XXX: just one directory
 
-	dir := args["dir"].(string)
+	// dir := args["dir"].(string)
+	dir, _ := GetPath(sid, args["dir"].(string), fmt.Sprint(args["pathtype"]))
 	if "" == dir {
 		userWorkspace := conf.GetUserWorkspace(wSession.UserId)
 		workspaces := filepath.SplitList(userWorkspace)
@@ -560,7 +577,7 @@ func SearchTextHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // walk traverses the specified path to build a file tree.
-func walk(path string, node *Node, creatable, removable, isGOAPI bool) {
+func walk(path, rootpath string, node *Node, creatable, removable, isGOAPI bool, pathtype int) {
 	files := listFiles(path)
 
 	for _, filename := range files {
@@ -569,17 +586,17 @@ func walk(path string, node *Node, creatable, removable, isGOAPI bool) {
 		fio, _ := os.Lstat(fpath)
 
 		child := Node{
-			Id:        filepath.ToSlash(fpath), // jQuery API can't accept "\", so we convert it to "/"
+			Id:        filepath.ToSlash(fpath)[len(rootpath):], // jQuery API can't accept "\", so we convert it to "/"
 			Name:      filename,
-			Path:      filepath.ToSlash(fpath),
+			Path:      filepath.ToSlash(fpath)[len(rootpath):],
 			Removable: removable,
 			IsGoAPI:   isGOAPI,
+			Pathtype:  pathtype,
 			Children:  []*Node{}}
 		node.Children = append(node.Children, &child)
 
 		if nil == fio {
 			logger.Warnf("Path [%s] is nil", fpath)
-
 			continue
 		}
 
@@ -592,7 +609,7 @@ func walk(path string, node *Node, creatable, removable, isGOAPI bool) {
 			gitPath := filepath.Join(fpath, ".git")
 			child.GitRepo = pathExists(gitPath)
 
-			walk(fpath, &child, creatable, removable, isGOAPI)
+			walk(fpath, rootpath, &child, creatable, removable, isGOAPI, pathtype)
 		} else {
 			child.Type = "f"
 			child.Creatable = creatable
@@ -603,6 +620,34 @@ func walk(path string, node *Node, creatable, removable, isGOAPI bool) {
 	}
 
 	return
+}
+
+func GetPath(uid, pathValue, pathtype string) (string, int) {
+	logger.Debugf("User [%s] getPath pathtype:[%s] getPath [%s] ", uid, pathtype, pathValue)
+	if pathtype == "0" {
+		userWorkspace := conf.GetUserWorkspace(uid)
+		workspaces := filepath.SplitList(userWorkspace)
+		if len(workspaces) > 0 {
+			path := filepath.Join(workspaces[0]+conf.PathSeparator, "src")
+			path = filepath.Join(path, pathValue)
+			pathValue = filepath.ToSlash(path)
+			logger.Debugf("User [%s] pathtype:[%s] getPath [%s] ", uid, pathtype, pathValue)
+			return pathValue, 0
+		}
+	} else if pathtype == "1" {
+		pathValue = filepath.Join(gulu.Go.GetAPIPath(), pathValue)
+		pathValue = filepath.ToSlash(pathValue)
+		logger.Debugf("User [%s] pathtype:[%s] getPath [%s] ", uid, pathtype, pathValue)
+		return pathValue, 1
+	} else if pathtype == "2" {
+		pathValue = filepath.Join(gulu.Go.GetPathPath(), pathValue)
+		pathValue = filepath.ToSlash(pathValue)
+		logger.Debugf("User [%s] pathtype:[%s] getPath [%s] ", uid, pathtype, pathValue)
+		return pathValue, 2
+	}
+
+	logger.Debugf("User [%s] pathtype:[%s] getPath [%s] ", uid, "-1", "")
+	return "", -1
 }
 
 func pathExists(path string) bool {

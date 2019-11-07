@@ -26,6 +26,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"fmt"
 
 	"github.com/b3log/gulu"
 	"github.com/b3log/wide/conf"
@@ -118,8 +119,9 @@ func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	uid := session.Values["uid"].(string)
-
-	path := args["path"].(string)
+	// path := args["path"].(string)
+	path, _ := file.GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
+	
 
 	fout, err := os.Create(path)
 

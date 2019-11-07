@@ -314,6 +314,7 @@ var editors = {
 
             var request = newWideRequest();
             request.path = $(".edit-panel .tabs .current > span:eq(0)").attr("title");
+            request.pathtype = $(".edit-panel .tabs .current > span:eq(0)").attr("pathtype");
             request.code = editor.getValue();
             request.cursorLine = cur.line;
             request.cursorCh = cur.ch;
@@ -429,6 +430,7 @@ var editors = {
 
             var request = newWideRequest();
             request.path = $(".edit-panel .tabs .current > span:eq(0)").attr("title");
+            request.pathtype = $(".edit-panel .tabs .current > span:eq(0)").attr("pathtype");
             request.code = wide.curEditor.getValue();
             request.cursorLine = cur.line;
             request.cursorCh = cur.ch;
@@ -577,6 +579,7 @@ var editors = {
 
             var request = newWideRequest();
             request.path = $(".edit-panel .tabs .current > span:eq(0)").attr("title");
+            request.pathtype = $(".edit-panel .tabs .current > span:eq(0)").attr("pathtype");
             request.code = wide.curEditor.getValue();
             request.cursorLine = cur.line;
             request.cursorCh = cur.ch;
@@ -607,6 +610,7 @@ var editors = {
 
             var request = newWideRequest();
             request.path = $(".edit-panel .tabs .current > span:eq(0)").attr("title");
+            request.pathtype = $(".edit-panel .tabs .current > span:eq(0)").attr("pathtype");
             request.code = wide.curEditor.getValue();
             request.cursorLine = cur.line;
             request.cursorCh = cur.ch;
@@ -727,7 +731,7 @@ var editors = {
 
         editors.tabs.add({
             id: id,
-            title: '<span title="' + wide.curNode.path + '"><span class="'
+            title: '<span title="' + wide.curNode.path + '" pathtype="'+wide.curNode.pathtype+'"><span class="'
                     + wide.curNode.iconSkin + 'ico"></span>' + wide.curNode.name + '</span>',
             content: '<textarea id="editor' + id + '"></textarea>'
         });
