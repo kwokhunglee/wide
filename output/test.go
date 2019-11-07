@@ -17,6 +17,7 @@ package output
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"math/rand"
@@ -24,8 +25,9 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/kwokhunglee/wide/gulu"
 	"github.com/kwokhunglee/wide/conf"
+	"github.com/kwokhunglee/wide/file"
+	"github.com/kwokhunglee/wide/gulu"
 	"github.com/kwokhunglee/wide/i18n"
 	"github.com/kwokhunglee/wide/session"
 )
@@ -55,7 +57,8 @@ func GoTestHandler(w http.ResponseWriter, r *http.Request) {
 
 	sid := args["sid"].(string)
 
-	filePath := args["file"].(string)
+	// filePath := args["file"].(string)
+	filePath, _ := file.GetPath(uid, args["file"].(string), fmt.Sprint(args["pathtype"]))
 	curDir := filepath.Dir(filePath)
 
 	cmd := exec.Command("go", "test", "-v")

@@ -16,11 +16,13 @@ package file
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
 
 	"github.com/kwokhunglee/wide/gulu"
+	"github.com/kwokhunglee/wide/session"
 )
 
 // GetZipHandler handles request of retrieving zip file.
@@ -62,7 +64,16 @@ func CreateZipHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path := args["path"].(string)
+	httpSession, _ := session.HTTPSession.Get(r, session.CookieName)
+	if httpSession.IsNew {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+
+		return
+	}
+	uid := httpSession.Values["uid"].(string)
+
+	// path := args["path"].(string)
+	path, _ := GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
 	var name string
 
 	base := filepath.Base(path)

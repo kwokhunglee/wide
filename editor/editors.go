@@ -18,6 +18,7 @@ package editor
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"os/exec"
@@ -26,14 +27,13 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"fmt"
 
-	"github.com/kwokhunglee/wide/gulu"
+	"github.com/gorilla/websocket"
 	"github.com/kwokhunglee/wide/conf"
 	"github.com/kwokhunglee/wide/file"
+	"github.com/kwokhunglee/wide/gulu"
 	"github.com/kwokhunglee/wide/session"
 	"github.com/kwokhunglee/wide/util"
-	"github.com/gorilla/websocket"
 )
 
 // Logger.
@@ -121,7 +121,6 @@ func AutocompleteHandler(w http.ResponseWriter, r *http.Request) {
 	uid := session.Values["uid"].(string)
 	// path := args["path"].(string)
 	path, _ := file.GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
-	
 
 	fout, err := os.Create(path)
 
@@ -195,7 +194,9 @@ func GetExprInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path := args["path"].(string)
+	// path := args["path"].(string)
+	path, _ := file.GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
+
 	curDir := filepath.Dir(path)
 	filename := filepath.Base(path)
 
@@ -271,7 +272,9 @@ func FindDeclarationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path := args["path"].(string)
+	// path := args["path"].(string)
+	path, _ := file.GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
+
 	curDir := filepath.Dir(path)
 	filename := filepath.Base(path)
 
@@ -360,7 +363,8 @@ func FindUsagesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filePath := args["path"].(string)
+	filePath, _ := file.GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
+	// filePath := args["path"].(string)
 	curDir := filepath.Dir(filePath)
 	filename := filepath.Base(filePath)
 

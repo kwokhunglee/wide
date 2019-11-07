@@ -28,6 +28,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/kwokhunglee/wide/file"
 	"github.com/kwokhunglee/wide/conf"
 	"github.com/kwokhunglee/wide/i18n"
 	"github.com/kwokhunglee/wide/session"
@@ -57,7 +58,8 @@ func BuildHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sid := args["sid"].(string)
-	filePath := args["file"].(string)
+	// filePath := args["file"].(string)
+	filePath, _ := file.GetPath(uid, args["file"].(string), fmt.Sprint(args["pathtype"]))
 	if gulu.Go.IsAPI(filePath) || !session.CanAccess(uid, filePath) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 

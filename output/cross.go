@@ -26,8 +26,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kwokhunglee/wide/gulu"
+	"fmt"
+
+	"github.com/kwokhunglee/wide/file"
+
 	"github.com/kwokhunglee/wide/conf"
+	"github.com/kwokhunglee/wide/gulu"
 	"github.com/kwokhunglee/wide/i18n"
 	"github.com/kwokhunglee/wide/session"
 )
@@ -56,8 +60,8 @@ func CrossCompilationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sid := args["sid"].(string)
-	filePath := args["path"].(string)
-
+	// filePath := args["path"].(string)
+	filePath, _ := file.GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
 	if gulu.Go.IsAPI(filePath) || !session.CanAccess(uid, filePath) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 

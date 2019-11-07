@@ -29,11 +29,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kwokhunglee/wide/gulu"
 	"github.com/kwokhunglee/wide/conf"
 	"github.com/kwokhunglee/wide/editor"
 	"github.com/kwokhunglee/wide/event"
 	"github.com/kwokhunglee/wide/file"
+	"github.com/kwokhunglee/wide/gulu"
 	"github.com/kwokhunglee/wide/i18n"
 	"github.com/kwokhunglee/wide/notification"
 	"github.com/kwokhunglee/wide/output"
@@ -158,7 +158,7 @@ func main() {
 
 	logger.Infof("Wide is running [%s]", conf.Wide.Server)
 
-	err := http.ListenAndServe("127.0.0.1:7070", nil)
+	err := http.ListenAndServe(":7070", nil)
 	if err != nil {
 		logger.Error(err)
 	}
