@@ -424,10 +424,10 @@ func RenameFileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	oldPath, _ := GetPath(uid, args["oldPath"].(string), fmt.Sprint(args["pathtype"]))
-	newPath, _ := GetPath(uid, args["newPath"].(string), fmt.Sprint(args["pathtype"]))
-	// oldPath := args["oldPath"].(string)
-	// newPath := args["newPath"].(string)
+	// oldPath, _ := GetPath(uid, args["oldPath"].(string), fmt.Sprint(args["pathtype"]))
+	// newPath, _ := GetPath(uid, args["newPath"].(string), fmt.Sprint(args["pathtype"]))
+	oldPath := args["oldPath"].(string)
+	newPath := args["newPath"].(string)
 	if gulu.Go.IsAPI(oldPath) || gulu.Go.IsPath(oldPath) ||
 		!session.CanAccess(uid, oldPath) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
