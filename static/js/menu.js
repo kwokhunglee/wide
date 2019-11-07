@@ -186,6 +186,7 @@ var menu = {
 
         var request = newWideRequest();
         request.file = currentPath;
+        request.pathtype = 0;
 
         $.ajax({
             type: 'POST',
@@ -214,6 +215,7 @@ var menu = {
 
         var request = newWideRequest();
         request.file = currentPath;
+        request.pathtype = 0;
 
         $.ajax({
             type: 'POST',
@@ -242,6 +244,7 @@ var menu = {
 
         var request = newWideRequest();
         request.file = currentPath;
+        request.pathtype = 0;
 
         $.ajax({
             type: 'POST',
@@ -274,6 +277,7 @@ var menu = {
         }
 
         var request = newWideRequest();
+        request.pathtype = 0;
         request.file = currentPath;
         request.code = wide.curEditor.getValue();
         request.nextCmd = "run";
@@ -307,6 +311,7 @@ var menu = {
         }
 
         var request = newWideRequest();
+        request.pathtype = 0;
         request.file = currentPath;
         request.code = wide.curEditor.getValue();
         request.nextCmd = ""; // build only, no following operation

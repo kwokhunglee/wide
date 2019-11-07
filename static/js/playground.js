@@ -450,6 +450,7 @@ var playground = {
                 // Step 2. compile code
                 var request = newWideRequest();
                 request.fileName = data.fileName;
+                request.pathtype = 0;
 
                 $.ajax({
                     type: 'POST',

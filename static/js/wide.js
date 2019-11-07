@@ -118,6 +118,7 @@ var wide = {
             "ok": function () {
                 var request = newWideRequest();
                 request.path = wide.curNode.path;
+                request.pathtype = wide.curNode.pathtype;
 
                 $.ajax({
                     type: 'POST',
@@ -152,10 +153,11 @@ var wide = {
             },
             "ok": function () {
                 var request = newWideRequest(),
-                        name = $("#dialogNewFilePrompt > input").val();
+                name = $("#dialogNewFilePrompt > input").val();
 
                 request.path = wide.curNode.path + "/" + name;
                 request.fileType = "f";
+                request.pathtype = 0;
 
                 $.ajax({
                     type: 'POST',
@@ -196,10 +198,11 @@ var wide = {
             },
             "ok": function () {
                 var name = $("#dialogNewDirPrompt > input").val(),
-                        request = newWideRequest();
+                request = newWideRequest();
 
                 request.path = wide.curNode.path + "/" + name;
                 request.fileType = "d";
+                request.pathtype = 0;
 
                 $.ajax({
                     type: 'POST',
@@ -296,10 +299,12 @@ var wide = {
                     var name = $("#dialogGoFilePrompt > input").val();
 
                     var request = newWideRequest();
+                    request.pathtype = 0;
                     request.path = '';
                     request.name = '*' + name + '*';
                     if (wide.curNode) {
                         request.path = wide.curNode.path;
+                        request.pathtype = wide.curNode.pathtype;
                     }
 
                     $.ajax({
@@ -396,6 +401,8 @@ var wide = {
 
             if ('run' === data.nextCmd) {
                 var request = newWideRequest();
+                
+                request.pathtype = 0;
                 request.executable = data.executable;
 
                 $.ajax({
@@ -475,6 +482,7 @@ var wide = {
                                     path = null;
                             request.path = data.executable;
                             request.name = data.name;
+                            request.pathtype = 0;
 
                             $.ajax({
                                 async: false,
@@ -628,6 +636,7 @@ var wide = {
 
         var request = newWideRequest();
         request.pid = wide.curProcessId;
+        request.pathtype = 0;
 
         $.ajax({
             type: 'POST',
@@ -675,6 +684,7 @@ var wide = {
         var scrollInfo = editor.getScrollInfo();
 
         var request = newWideRequest();
+        request.pathtype = 0;
         request.file = path;
         request.code = editor.getValue();
         request.cursorLine = cursor.line;

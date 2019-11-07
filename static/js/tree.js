@@ -189,6 +189,7 @@ var tree = {
     crossCompile: function (platform) {
         var request = newWideRequest();
         request.path = wide.curNode.path;
+        request.pathtype = wide.curNode.pathtype;
         request.platform = platform;
 
         $.ajax({
@@ -222,6 +223,9 @@ var tree = {
 
         var request = newWideRequest();
 
+        request.path = wide.curNode.path;
+        request.pathtype = wide.curNode.pathtype;   
+
         $.ajax({
             type: 'POST',
             url: '/files',
@@ -234,7 +238,8 @@ var tree = {
                     var setting = {
                         data: {
                             key: {
-                                title: "path"
+                                title: "path",
+                                pathtype: "pathtype"
                             }
                         },
                         view: {
@@ -244,7 +249,7 @@ var tree = {
                         async: {
                             enable: true,
                             url: "/file/refresh",
-                            autoParam: ["path"]
+                            autoParam: ["path","pathtype"]
                         },
                         callback: {
                             onDblClick: function (event, treeId, treeNode) {
@@ -475,7 +480,7 @@ var tree = {
             },
             "ok": function () {
                 var request = newWideRequest();
-
+                request.pathtype = 0;
                 if (!wide.curNode) {
                     request.dir = "";
                 } else {
@@ -517,7 +522,7 @@ var tree = {
             },
             "ok": function () {
                 var name = $("#dialogRenamePrompt > input").val(),
-                        request = newWideRequest();
+                request = newWideRequest();
 
                 request.oldPath = wide.curNode.path;
                 request.pathtype = wide.curNode.pathtype;                
