@@ -25,9 +25,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/kwokhunglee/wide/gulu"
 	"github.com/kwokhunglee/wide/conf"
 	"github.com/kwokhunglee/wide/event"
+	"github.com/kwokhunglee/wide/gulu"
 	"github.com/kwokhunglee/wide/session"
 )
 
@@ -327,7 +327,8 @@ func NewFileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path, _ := GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
+	path := args["path"].(string)
+	// path, _ := GetPath(uid, args["path"].(string), fmt.Sprint(args["pathtype"]))
 
 	if gulu.Go.IsAPI(path) || gulu.Go.IsPath(path) || !session.CanAccess(uid, path) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
