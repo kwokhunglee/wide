@@ -22,7 +22,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/b3log/gulu"
+	"github.com/kwokhunglee/wide/gulu"
 )
 
 // Logger.

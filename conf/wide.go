@@ -27,8 +27,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/b3log/gulu"
-	"github.com/b3log/wide/event"
+	"github.com/kwokhunglee/wide/gulu"
+	"github.com/kwokhunglee/wide/event"
 )
 
 const (
@@ -42,7 +42,7 @@ const (
 	// CodeMirrorVer holds the current editor version.
 	CodeMirrorVer = "5.1"
 	// UserAgent represents HTTP client user agent.
-	UserAgent = "Wide/" + WideVersion + "; +https://github.com/b3log/wide"
+	UserAgent = "Wide/" + WideVersion + "; +https://github.com/kwokhunglee/wide"
 
 	HelloWorld = `package main
 
@@ -135,12 +135,12 @@ func initUsers() {
 			continue
 		}
 
-		// Compatibility upgrade (1.3.0): https://github.com/b3log/wide/issues/83
+		// Compatibility upgrade (1.3.0): https://github.com/kwokhunglee/wide/issues/83
 		if "" == user.Keymap {
 			user.Keymap = "wide"
 		}
 
-		// Compatibility upgrade (1.5.3): https://github.com/b3log/wide/issues/308
+		// Compatibility upgrade (1.5.3): https://github.com/kwokhunglee/wide/issues/308
 		if "" == user.GoBuildArgsForLinux {
 			user.GoBuildArgsForLinux = "-i"
 		}

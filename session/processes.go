@@ -27,9 +27,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/b3log/gulu"
-	"github.com/b3log/wide/conf"
-	"github.com/b3log/wide/util"
+	"github.com/kwokhunglee/wide/gulu"
+	"github.com/kwokhunglee/wide/conf"
+	"github.com/kwokhunglee/wide/util"
 )
 
 // Type of process set.

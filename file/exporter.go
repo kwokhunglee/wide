@@ -20,7 +20,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/b3log/gulu"
+	"github.com/kwokhunglee/wide/gulu"
 )
 
 // GetZipHandler handles request of retrieving zip file.

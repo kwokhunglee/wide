@@ -18,7 +18,7 @@ package event
 import (
 	"os"
 
-	"github.com/b3log/gulu"
+	"github.com/kwokhunglee/wide/gulu"
 )
 
 const (

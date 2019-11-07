@@ -28,11 +28,11 @@ import (
 	"time"
 	"fmt"
 
-	"github.com/b3log/gulu"
-	"github.com/b3log/wide/conf"
-	"github.com/b3log/wide/file"
-	"github.com/b3log/wide/session"
-	"github.com/b3log/wide/util"
+	"github.com/kwokhunglee/wide/gulu"
+	"github.com/kwokhunglee/wide/conf"
+	"github.com/kwokhunglee/wide/file"
+	"github.com/kwokhunglee/wide/session"
+	"github.com/kwokhunglee/wide/util"
 	"github.com/gorilla/websocket"
 )
 

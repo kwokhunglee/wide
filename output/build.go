@@ -18,7 +18,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/b3log/gulu"
+	"github.com/kwokhunglee/wide/gulu"
 	"io"
 	"net/http"
 	"os"
@@ -28,9 +28,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/b3log/wide/conf"
-	"github.com/b3log/wide/i18n"
-	"github.com/b3log/wide/session"
+	"github.com/kwokhunglee/wide/conf"
+	"github.com/kwokhunglee/wide/i18n"
+	"github.com/kwokhunglee/wide/session"
 )
 
 // BuildHandler handles request of building.
@@ -182,7 +182,7 @@ func BuildHandler(w http.ResponseWriter, r *http.Request) {
 
 			_, ok := err.(*os.PathError)
 			if ok {
-				// 构建时报 “read |0: file already closed” https://github.com/b3log/wide/issues/363
+				// 构建时报 “read |0: file already closed” https://github.com/kwokhunglee/wide/issues/363
 				break
 			}
 

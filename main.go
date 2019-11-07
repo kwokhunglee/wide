@@ -29,16 +29,16 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/b3log/gulu"
-	"github.com/b3log/wide/conf"
-	"github.com/b3log/wide/editor"
-	"github.com/b3log/wide/event"
-	"github.com/b3log/wide/file"
-	"github.com/b3log/wide/i18n"
-	"github.com/b3log/wide/notification"
-	"github.com/b3log/wide/output"
-	"github.com/b3log/wide/playground"
-	"github.com/b3log/wide/session"
+	"github.com/kwokhunglee/wide/gulu"
+	"github.com/kwokhunglee/wide/conf"
+	"github.com/kwokhunglee/wide/editor"
+	"github.com/kwokhunglee/wide/event"
+	"github.com/kwokhunglee/wide/file"
+	"github.com/kwokhunglee/wide/i18n"
+	"github.com/kwokhunglee/wide/notification"
+	"github.com/kwokhunglee/wide/output"
+	"github.com/kwokhunglee/wide/playground"
+	"github.com/kwokhunglee/wide/session"
 )
 
 // Logger

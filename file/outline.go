@@ -23,7 +23,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/b3log/gulu"
+	"github.com/kwokhunglee/wide/gulu"
 )
 
 type element struct {

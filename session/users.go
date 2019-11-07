@@ -24,9 +24,9 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/b3log/gulu"
-	"github.com/b3log/wide/conf"
-	"github.com/b3log/wide/i18n"
+	"github.com/kwokhunglee/wide/gulu"
+	"github.com/kwokhunglee/wide/conf"
+	"github.com/kwokhunglee/wide/i18n"
 )
 
 const (

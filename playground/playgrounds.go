@@ -26,11 +26,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/b3log/gulu"
-	"github.com/b3log/wide/conf"
-	"github.com/b3log/wide/i18n"
-	"github.com/b3log/wide/session"
-	"github.com/b3log/wide/util"
+	"github.com/kwokhunglee/wide/gulu"
+	"github.com/kwokhunglee/wide/conf"
+	"github.com/kwokhunglee/wide/i18n"
+	"github.com/kwokhunglee/wide/session"
+	"github.com/kwokhunglee/wide/util"
 	"github.com/gorilla/websocket"
 )
 

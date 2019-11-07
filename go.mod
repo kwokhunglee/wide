@@ -1,9 +1,8 @@
-module github.com/b3log/wide
+module github.com/kwokhunglee/wide
 
 go 1.12
 
 require (
-	github.com/b3log/gulu v0.0.0-20190806034141-2b1d1b33ff3d
 	github.com/elazarl/goproxy v0.0.0-20190711103511-473e67f1d7d2 // indirect
 	github.com/elazarl/goproxy/ext v0.0.0-20190711103511-473e67f1d7d2 // indirect
 	github.com/fsnotify/fsnotify v1.4.7

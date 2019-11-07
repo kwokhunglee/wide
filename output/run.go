@@ -15,7 +15,7 @@
 package output
 
 import (
-	"github.com/b3log/wide/session"
+	"github.com/kwokhunglee/wide/session"
 	"net/http"
 )
 

@@ -21,10 +21,10 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/b3log/gulu"
-	"github.com/b3log/wide/conf"
-	"github.com/b3log/wide/file"
-	"github.com/b3log/wide/session"
+	"github.com/kwokhunglee/wide/gulu"
+	"github.com/kwokhunglee/wide/conf"
+	"github.com/kwokhunglee/wide/file"
+	"github.com/kwokhunglee/wide/session"
 )
 
 // GoFmtHandler handles request of formatting Go source code.
