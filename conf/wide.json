@@ -1,5 +1,5 @@
 {
-  "Server": "http://127.0.0.1:7070",
+  "Server": "http://wide.cde.online",
   "LogLevel": "debug",
   "Data": "${home}/wide",
   "RuntimeMode": "dev",
