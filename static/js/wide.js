@@ -548,13 +548,14 @@ var wide = {
 
         this._initDialog();
     },
-    _save: function (path, editor) {
+    _save: function (path, pathtype,editor) {
         if (!path) {
             return false;
         }
 
         var request = newWideRequest();
         request.file = path;
+        request.pathtype=pathtype;
         request.code = editor.getValue();
 
         $.ajax({
@@ -580,17 +581,19 @@ var wide = {
             return false;
         }
 
+        var pathtype = editors.getCurrentPathType();
         var editor = wide.curEditor;
         if (editor.doc.isClean()) { // no modification
             return false;
         }
 
         if ("text/x-go" === editor.getOption("mode")) {
-            wide.gofmt(path, wide.curEditor); // go fmt will save
+            wide.gofmt(path,pathtype, wide.curEditor); // go fmt will save
 
             // build the file at once
             var request = newWideRequest();
             request.file = path;
+            request.pathtype = pathtype;
             request.code = editor.getValue();
             request.nextCmd = ""; // build only, no following operation
             $.ajax({
@@ -611,7 +614,7 @@ var wide = {
             return;
         }
 
-        wide._save(path, wide.curEditor);
+        wide._save(path, pathtype,wide.curEditor);
     },
     stop: function () {
         if ($("#buildRun").hasClass("ico-buildrun")) {
@@ -637,12 +640,13 @@ var wide = {
             }
         });
     },
-    gofmt: function (path, editor) {
+    gofmt: function (path,pathtype, editor) {
         var cursor = editor.getCursor();
         var scrollInfo = editor.getScrollInfo();
 
         var request = newWideRequest();
         request.file = path;
+        request.pathtype = pathtype;
         request.code = editor.getValue();
         request.cursorLine = cursor.line;
         request.cursorCh = cursor.ch;
@@ -659,12 +663,12 @@ var wide = {
                     editor.setCursor(cursor);
                     editor.scrollTo(null, scrollInfo.top);
 
-                    wide._save(path, editor);
+                    wide._save(path,pathtype, editor);
                 }
             }
         });
     },
-    fmt: function (path, editor) {
+    fmt: function (path,pathtype, editor) {
         var mode = editor.getOption("mode");
 
         var cursor = editor.getCursor();
@@ -713,7 +717,7 @@ var wide = {
             editor.setCursor(cursor);
             editor.scrollTo(null, scrollInfo.top);
 
-            wide._save(path, editor);
+            wide._save(path,pathtype, editor);
         }
     },
     getClassBySuffix: function (suffix) {

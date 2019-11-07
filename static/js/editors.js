@@ -105,7 +105,7 @@ var editors = {
             "afterInit": function () {
                 $("#dialogCloseEditor button.save").click(function () {
                     var i = $("#dialogCloseEditor").data("index");
-                    wide.fmt(editors.data[i].id, editors.data[i].editor);
+                    wide.fmt(editors.data[i].id, editors.data[i].pathtype, editors.data[i].editor);
                     editors.tabs.del(editors.data[i].id);
                     $("#dialogCloseEditor").dialog("close");
                     editors._removeAllMarker();
@@ -296,6 +296,10 @@ var editors = {
             currentPath = null;
         }
         return currentPath;
+    },
+    getCurrentPathType: function () {
+        var currentPathtype = $(".edit-panel .tabs .current span:eq(0)").attr("pathtype");
+        return currentPathtype;
     },
     _initCodeMirrorHotKeys: function () {
         CodeMirror.registerHelper("hint", "go", function (editor) {
@@ -781,7 +785,8 @@ var editors = {
                     if (!currentPath) {
                         return false;
                     }
-                    wide.fmt(currentPath, wide.curEditor);
+                    var currentPath = editors.getCurrentPathType();
+                    wide.fmt(currentPath,currentPath, wide.curEditor);
                 },
                 "Alt-F7": "findUsages",
                 "Shift-Alt-Enter": function () {
