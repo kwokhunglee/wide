@@ -150,7 +150,16 @@ func RefreshDirectoryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	uid := httpSession.Values["uid"].(string)
 	r.ParseForm()
-	pathValue, pathtype := GetPath(uid, r.FormValue("path"), r.FormValue("pathtype"))
+
+	pathValue := r.FormValue("path")
+	pathtype := 0
+	if r.FormValue("pathtype") == "1" {
+		pathtype = 1
+	} else if r.FormValue("pathtype") == "2" {
+		pathtype = 2
+	}
+	// pathValue, pathtype := GetPath(uid, r.FormValue("path"), r.FormValue("pathtype"))
+
 	if !gulu.Go.IsAPI(pathValue) && !gulu.Go.IsPath(pathValue) && !session.CanAccess(uid, pathValue) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
@@ -428,28 +437,27 @@ func RenameFileHandler(w http.ResponseWriter, r *http.Request) {
 	// newPath, _ := GetPath(uid, args["newPath"].(string), fmt.Sprint(args["pathtype"]))
 	oldPath := args["oldPath"].(string)
 	newPath := args["newPath"].(string)
+
+	logger.Debugf("Renamed check [%s] to [%s] ", oldPath, newPath)
 	if gulu.Go.IsAPI(oldPath) || gulu.Go.IsPath(oldPath) ||
 		!session.CanAccess(uid, oldPath) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
 	}
-
+	logger.Debugf("Renamed check [%s] to [%s] ", oldPath, newPath)
 	if gulu.Go.IsAPI(newPath) || gulu.Go.IsPath(newPath) || !session.CanAccess(uid, newPath) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
-
 		return
 	}
 
 	sid := args["sid"].(string)
-
 	wSession := session.WideSessions.Get(sid)
 
+	logger.Debugf("Renamed renameFile [%s] to [%s] ", oldPath, newPath)
 	if !renameFile(oldPath, newPath) {
 		result.Code = -1
-
 		wSession.EventQueue.Queue <- &event.Event{Code: event.EvtCodeServerInternalError, Sid: sid,
 			Data: "can't rename file " + oldPath}
-
 		return
 	}
 
